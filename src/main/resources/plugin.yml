@@ -1,0 +1,10 @@
+name: HoloAdvancements
+version: 0.1
+main: xyz.holocons.mc.holoa9t.HoloAdvancements
+api-version: 1.19
+prefix: 'HoloAdvancements'
+authors: [ mms0316 ]
+description: A custom plugin for HoloCons SMP. It adds custom advancements.
+website: holocons.xyz
+
+depend: [UltimateAdvancementAPI]
