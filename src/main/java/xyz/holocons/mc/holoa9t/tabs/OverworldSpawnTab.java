@@ -1,35 +1,62 @@
 package xyz.holocons.mc.holoa9t.tabs;
 
+import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementDisplay;
 import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementFrameType;
 import org.bukkit.Material;
-import xyz.holocons.mc.holoa9t.baseadv.HoloRailsCartAdv;
+import org.bukkit.configuration.file.FileConfiguration;
+import xyz.holocons.mc.holoa9t.HoloAdvancements;
+import xyz.holocons.mc.holoa9t.adv.SpawnCocoFindAdv;
+import xyz.holocons.mc.holoa9t.adv.SpawnYagooFindAdv;
+import xyz.holocons.mc.holoa9t.baseadv.HoloRailsCartRideAdv;
 
 public class OverworldSpawnTab extends BaseTab {
     public OverworldSpawnTab(boolean grantRootAdvancement) {
-        super();
+        super("overworld_spawn");
         this.grantRootAdvancement = grantRootAdvancement;
 
-        namespace = "overworld_spawn";
-        key = "root";
-        title = "Spawn Area";
-        description = "Explore the Spawn area";
-        backgroundTexture = "textures/block/quartz_bricks.png";
-        icon = Material.SMOOTH_QUARTZ;
-        frame = AdvancementFrameType.TASK;
-        showToast = true;
-        announceChat = true;
-        x = 0;
-        y = 0;
+        backgroundTexture = "textures/block/quartz_bricks.png"; //TODO: move to config.yml
+    }
 
+    @Override
+    public void register() {
+        final var namespace = getSectionName();
         var root = getRootAdvancement();
+        if (root == null) {
+            HoloAdvancements.getInstance().getLogger().warning("Invalid config for " + getSectionName());
+            return;
+        }
+
         var children = getChildren();
 
         // Put new children here
-        new HoloRailsCartAdv(namespace,
+        var HoloRailsCartRideDisplay = new AdvancementDisplay(
+                Material.MINECART,
                 "Use Spawn Station",
-                "Take a ride from Spawn station. When on max speed, leaving will break the cart!",
-                x + 1, y, root).register(children);
+                AdvancementFrameType.TASK,
+                true, true,
+                1, 0,
+                "Take a ride from Spawn station. When on max speed, leaving will break the cart!");
+        new HoloRailsCartRideAdv(namespace, HoloRailsCartRideDisplay, root).register(children);
+
+        new SpawnYagooFindAdv(namespace, "yagoo_location",
+                "Greet Yagoo",
+                "Found the truly best girl",
+                1, 1, root).register(children);
+
+        new SpawnCocoFindAdv(namespace, "dragon_location",
+                "Greet the OG",
+                "Good morning, Weather Hackers",
+                1, 2, root).register(children);
 
         super.register();
+    }
+
+    @Override
+    public boolean loadConfigValues(FileConfiguration cfg) {
+        boolean loaded = super.loadConfigValues(cfg);
+
+
+
+        return loaded;
     }
 }

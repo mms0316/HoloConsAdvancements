@@ -35,7 +35,13 @@ public class HoloAdvancements extends JavaPlugin implements Listener {
     public void onEnable() {
         instance = this;
         api = UltimateAdvancementAPI.getInstance(this);
+
+        //saveDefaultConfig();
         loadInitialConfigFile();
+
+        for (var tab : getTabs()) {
+            tab.register();
+        }
 
         getLogger().info("Loaded");
     }
@@ -66,6 +72,7 @@ public class HoloAdvancements extends JavaPlugin implements Listener {
         //Automatic file reload
         var reloadPeriod = cfg.getInt("reloadPeriod");
         if (reloadPeriod > 0) {
+            //TODO: create method to load only event values (the API doesn't let you change display values in runtime, so reloading those don't matter)
             Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::loadNewConfigFile, reloadPeriod, reloadPeriod);
         }
     }
@@ -79,6 +86,7 @@ public class HoloAdvancements extends JavaPlugin implements Listener {
             tab.loadConfigValues(cfg);
         }
 
+        //TODO: too spammy every 5 minutes - omit if nothing changed
         getLogger().info("Reloaded config file");
     }
 
