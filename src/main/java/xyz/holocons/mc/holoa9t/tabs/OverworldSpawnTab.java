@@ -4,10 +4,11 @@ import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementDispla
 import com.fren_gor.ultimateAdvancementAPI.advancement.display.AdvancementFrameType;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 import xyz.holocons.mc.holoa9t.HoloAdvancements;
-import xyz.holocons.mc.holoa9t.adv.SpawnCocoFindAdv;
-import xyz.holocons.mc.holoa9t.adv.SpawnYagooFindAdv;
+import xyz.holocons.mc.holoa9t.baseadv.CuboidEnterAdv;
 import xyz.holocons.mc.holoa9t.baseadv.HoloRailsCartRideAdv;
+import xyz.holocons.mc.holoa9t.icon.PlayerHead;
 
 public class OverworldSpawnTab extends BaseTab {
     public OverworldSpawnTab(boolean grantRootAdvancement) {
@@ -29,24 +30,33 @@ public class OverworldSpawnTab extends BaseTab {
         var children = getChildren();
 
         // Put new children here
-        var HoloRailsCartRideDisplay = new AdvancementDisplay(
+
+        var display = new AdvancementDisplay(
                 Material.MINECART,
                 "Use Spawn Station",
                 AdvancementFrameType.TASK,
                 true, true,
                 1, 0,
-                "Take a ride from Spawn station. When on max speed, leaving will break the cart!");
-        new HoloRailsCartRideAdv(namespace, HoloRailsCartRideDisplay, root).register(children);
+                "Take a ride from Spawn station.", "When on max speed, leaving will break the cart!");
+        new HoloRailsCartRideAdv(namespace, display, root).register(children);
 
-        new SpawnYagooFindAdv(namespace, "yagoo_location",
+        display = new AdvancementDisplay(
+                new ItemStack(Material.ZOMBIE_HEAD),
                 "Greet Yagoo",
-                "Found the truly best girl",
-                1, 1, root).register(children);
+                AdvancementFrameType.TASK,
+                true, true,
+                1, 1,
+                "Found the truly best girl");
+        new CuboidEnterAdv(namespace, "yagoo_location", display, root).register(children);
 
-        new SpawnCocoFindAdv(namespace, "dragon_location",
+        display = new AdvancementDisplay(
+                PlayerHead.make("http://textures.minecraft.net/texture/efe873d27cc5c39880b94dd2dbf45b9c75789a18ea442fbee1fa28ab87ac1981"),
                 "Greet the OG",
-                "Good morning, Weather Hackers",
-                1, 2, root).register(children);
+                AdvancementFrameType.TASK,
+                true, true,
+                1, 2,
+                "Good morning, Weather Hackers");
+        new CuboidEnterAdv(namespace, "dragon_location", display, root).register(children);
 
         super.register();
     }

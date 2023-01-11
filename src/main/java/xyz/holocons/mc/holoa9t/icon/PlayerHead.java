@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -19,5 +21,13 @@ public class PlayerHead {
             itemStack.setItemMeta(skullMeta);
         }
         return itemStack;
+    }
+
+    public static ItemStack make(String urlString) {
+        try {
+            return make(new URL(urlString));
+        } catch (Exception ignored) {
+            return new ItemStack(Material.PLAYER_HEAD);
+        }
     }
 }
