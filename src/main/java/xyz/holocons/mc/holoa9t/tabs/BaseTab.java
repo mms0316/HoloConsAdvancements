@@ -13,10 +13,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class BaseTab implements FileConfigurable {
+    static final String TAB_SECTION = "tab";
+    static final String BACKGROUND_TEXTURE = "background_texture";
+    protected String backgroundTexture;
+
     protected DisplayBuilder rootDisplayBuilder;
 
     protected String sectionName;
-    protected String backgroundTexture;
     protected boolean grantRootAdvancement = false;
 
     private AdvancementTab tab = null;
@@ -26,7 +29,7 @@ public abstract class BaseTab implements FileConfigurable {
     public BaseTab(String sectionName) {
         this.sectionName = sectionName;
 
-        rootDisplayBuilder = new DisplayBuilder(sectionName);
+        rootDisplayBuilder = new DisplayBuilder("display" + "." + sectionName);
     }
 
     public AdvancementTab getTab() {
@@ -76,6 +79,15 @@ public abstract class BaseTab implements FileConfigurable {
     public boolean setInitialConfigValues(FileConfiguration cfg) {
         boolean changed = rootDisplayBuilder.setInitialConfigValues(cfg);
 
+        final String basePath = getBasePath();
+        String path;
+
+        path = basePath + BACKGROUND_TEXTURE;
+        if (cfg.get(path) == null) {
+            cfg.set(path, "Use a minecraft texture like textures/block/tnt_top.png");
+            changed = true;
+        }
+
         for (var adv : getChildren()) {
             if (adv instanceof FileConfigurable fileConfigurable) {
                 if (fileConfigurable.setInitialConfigValues(cfg)) {
@@ -90,6 +102,10 @@ public abstract class BaseTab implements FileConfigurable {
     public boolean loadConfigValues(FileConfiguration cfg) {
         boolean fail = !rootDisplayBuilder.loadConfigValues(cfg);
 
+        backgroundTexture = loadBackgroundTexture(cfg, getBasePath());
+        if (backgroundTexture == null)
+            fail = true;
+
         for (var adv : getChildren()) {
             if (adv instanceof FileConfigurable fileConfigurable) {
                 if (!fileConfigurable.loadConfigValues(cfg)) {
@@ -99,5 +115,21 @@ public abstract class BaseTab implements FileConfigurable {
         }
 
         return !fail;
+    }
+
+    protected String loadBackgroundTexture(FileConfiguration cfg, String basePath) {
+        var value = cfg.getString(basePath + BACKGROUND_TEXTURE);
+        if (value != null && !value.matches("[a-z0-9/._-]+"))
+            value = null;
+
+        if (value == null) {
+            value = ""; // This will create the infamous black & magenta texture: https://minecraft.fandom.com/wiki/Missing_textures_and_models
+        }
+
+        return value;
+    }
+
+    private String getBasePath() {
+        return TAB_SECTION + "." + getSectionName() + ".";
     }
 }

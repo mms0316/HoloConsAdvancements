@@ -14,8 +14,6 @@ public class OverworldSpawnTab extends BaseTab {
     public OverworldSpawnTab(boolean grantRootAdvancement) {
         super("overworld_spawn");
         this.grantRootAdvancement = grantRootAdvancement;
-
-        backgroundTexture = "textures/block/quartz_bricks.png"; //TODO: move to config.yml
     }
 
     @Override
